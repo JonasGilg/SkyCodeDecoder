@@ -55,8 +55,8 @@ public class Main extends Application {
 		output = new HBox();
 		output.setSpacing(50);
 		outputPane = new ScrollPane(output);
-		outputPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-		outputPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		outputPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		outputPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
 		centerPane.setOrientation(Orientation.VERTICAL);
 		centerPane.getItems().addAll(input,outputPane);
