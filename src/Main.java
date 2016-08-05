@@ -1,11 +1,12 @@
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class Main extends Application {
 	private HBox output;
 
 	private Button computeButton;
+	private ChoiceBox inputBox;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -28,8 +30,21 @@ public class Main extends Application {
 		BorderPane center = new BorderPane();
 		Scene scene = new Scene(center);
 		primaryStage.setScene(scene);
+		BorderPane inputArea = new BorderPane();
 
-		input = new TextArea("Enter list of numbers between 0 and 255 separated by tabs!");
+		ObservableList<String> options =
+				FXCollections.observableArrayList(
+						"Tab",
+						"Space",
+						",",
+						";"
+				);
+
+
+		inputBox = new ChoiceBox<>(options);
+		inputBox.setValue("Tab");
+		input = new TextArea();
+
 		output = new HBox();
 		output.setSpacing(50);
 		outputPane = new ScrollPane(output);
@@ -39,8 +54,10 @@ public class Main extends Application {
 		computeButton = new Button("Compute");
 
 		computeButton.setOnAction(event -> ImageCreator.processData(getInput()));
-
-		center.setTop(input);
+		inputArea.setTop(new Text("Insert a String of single Bytes (0-255) you want processed below. Choose the used separator from the ComboBox to the right.\n press <Compute> to process the images"));
+		inputArea.setCenter(input);
+		inputArea.setRight(inputBox);
+		center.setTop(inputArea);
 		center.setCenter(outputPane);
 		center.setRight(computeButton);
 
@@ -58,11 +75,22 @@ public class Main extends Application {
 		String in = input.getText();
 
 		String[] rows = in.split("\\n");
-		int[][] matrix = new int[rows.length][rows[0].split("\\t").length];
+		String separator = (String)inputBox.getValue();
+		switch(separator){
+			case "Tab":
+				separator = "\\t";
+				break;
+			case "Space":
+				separator = " ";
+				break;
+			default:
+				break;
+		}
+		int[][] matrix = new int[rows.length][rows[0].split(separator).length];
 
 		for (int y = 0; y < rows.length; y++) {
 			String row = rows[y];
-			String[] columns = row.split("\\t");
+			String[] columns = row.split(separator);
 			for (int x = 0; x < columns.length; x++) {
 				String column = columns[x];
 				matrix[y][x] = Integer.parseInt(column);
