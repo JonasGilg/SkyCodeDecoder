@@ -16,10 +16,10 @@ public class Main extends Application {
 
 	public static Main instance;
 
-	private TextArea input;
+	private TextArea inputTextArea;
 
 	private ScrollPane outputPane;
-	private HBox output;
+	private HBox imageOutputBox;
 
 	private Button computeButton;
 	private ChoiceBox inputBox;
@@ -33,8 +33,10 @@ public class Main extends Application {
 		BorderPane rootPane = new BorderPane();
 		SplitPane centerPane = new SplitPane();
 		VerticalToolBar toolbar = new VerticalToolBar();
-
 		initTable();
+
+
+
 
 		Scene scene = new Scene(rootPane);
 		primaryStage.setScene(scene);
@@ -50,20 +52,28 @@ public class Main extends Application {
 		inputBox.setValue("Tab");
 
 		computeButton = new Button("Compute");
-		computeButton.setOnAction(event -> ImageCreator.processData(getInput()));
+		computeButton.setOnAction(event -> ImageCreator.processData(getInputTextArea()));
 
 		toolbar.addChoiceBox(inputBox);
 		toolbar.addButton(computeButton);
-		//SplitPane with input and output
-		input = new TextArea();
-		output = new HBox();
-		output.setSpacing(50);
-		outputPane = new ScrollPane(output);
+		//SplitPane with inputTextArea and imageOutputBox
+		inputTextArea = new TextArea();
+		imageOutputBox = new HBox();
+		imageOutputBox.setSpacing(50);
+		outputPane = new ScrollPane(imageOutputBox);
 		outputPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		outputPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+		TabPane tabPane = new TabPane();
+		Tab textTab = new Tab("InputTextArea");
+		textTab.setContent(inputTextArea);
+		Tab tableTab = new Tab("InputTable");
+		tableTab.setContent(table);
+
+		tabPane.getTabs().addAll(textTab,tableTab);
+
 		centerPane.setOrientation(Orientation.VERTICAL);
-		centerPane.getItems().addAll(input,outputPane);
+		centerPane.getItems().addAll(tabPane,outputPane);
 		centerPane.setDividerPosition(1,0.5);
 
 		//putting things together
@@ -80,15 +90,16 @@ public class Main extends Application {
 		table = new TableView();
 
 
+
 	}
 
 	public void addImages(ArrayList<ImageView> images) {
-		output.getChildren().clear();
-		output.getChildren().addAll(images);
+		imageOutputBox.getChildren().clear();
+		imageOutputBox.getChildren().addAll(images);
 	}
 
-	private int[][] getInput() {
-		String in = input.getText();
+	private int[][] getInputTextArea() {
+		String in = inputTextArea.getText();
 
 		String[] rows = in.split("\\n");
 		//check for separator
