@@ -24,6 +24,8 @@ public class Main extends Application {
 	private Button computeButton;
 	private ChoiceBox inputBox;
 
+	private TableView table;
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		instance = this;
@@ -31,6 +33,8 @@ public class Main extends Application {
 		BorderPane rootPane = new BorderPane();
 		SplitPane centerPane = new SplitPane();
 		VerticalToolBar toolbar = new VerticalToolBar();
+
+		initTable();
 
 		Scene scene = new Scene(rootPane);
 		primaryStage.setScene(scene);
@@ -70,6 +74,12 @@ public class Main extends Application {
 		primaryStage.setMaximized(true);
 		primaryStage.setTitle("Grey Scale Image Creator");
 		primaryStage.show();
+	}
+
+	private void initTable() {
+		table = new TableView();
+
+
 	}
 
 	public void addImages(ArrayList<ImageView> images) {
