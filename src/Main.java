@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -27,11 +28,13 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		instance = this;
 
-		BorderPane center = new BorderPane();
-		Scene scene = new Scene(center);
-		primaryStage.setScene(scene);
-		BorderPane inputArea = new BorderPane();
+		BorderPane rootPane = new BorderPane();
+		SplitPane centerPane = new SplitPane();
+		VerticalToolBar toolbar = new VerticalToolBar();
 
+		Scene scene = new Scene(rootPane);
+		primaryStage.setScene(scene);
+		//Toolbar
 		ObservableList<String> options =
 				FXCollections.observableArrayList(
 						"Tab",
@@ -39,27 +42,30 @@ public class Main extends Application {
 						",",
 						";"
 				);
-
-
 		inputBox = new ChoiceBox<>(options);
 		inputBox.setValue("Tab");
-		input = new TextArea();
 
+		computeButton = new Button("Compute");
+		computeButton.setOnAction(event -> ImageCreator.processData(getInput()));
+
+		toolbar.addChoiceBox(inputBox);
+		toolbar.addButton(computeButton);
+		//SplitPane with input and output
+		input = new TextArea();
 		output = new HBox();
 		output.setSpacing(50);
 		outputPane = new ScrollPane(output);
 		outputPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		outputPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
-		computeButton = new Button("Compute");
+		centerPane.setOrientation(Orientation.VERTICAL);
+		centerPane.getItems().addAll(input,outputPane);
+		centerPane.setDividerPosition(1,0.5);
 
-		computeButton.setOnAction(event -> ImageCreator.processData(getInput()));
-		inputArea.setTop(new Text("Insert a String of single Bytes (0-255) you want processed below. Choose the used separator from the ComboBox to the right.\n press <Compute> to process the images"));
-		inputArea.setCenter(input);
-		inputArea.setRight(inputBox);
-		center.setTop(inputArea);
-		center.setCenter(outputPane);
-		center.setRight(computeButton);
+		//putting things together
+		rootPane.setTop(new Text("Insert a String of single Bytes (0-255) you want processed below. Choose the used separator from the ComboBox to the right.\n press <Compute> to process the images"));
+		rootPane.setCenter(centerPane);
+		rootPane.setRight(toolbar);
 
 		primaryStage.setMaximized(true);
 		primaryStage.setTitle("Grey Scale Image Creator");
@@ -75,6 +81,7 @@ public class Main extends Application {
 		String in = input.getText();
 
 		String[] rows = in.split("\\n");
+		//check for separator
 		String separator = (String)inputBox.getValue();
 		switch(separator){
 			case "Tab":
